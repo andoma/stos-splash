@@ -10,5 +10,5 @@ LDFLAGS += $(shell pkg-config --libs freetype2)
 
 LDFLAGS +=  -lm -lpthread
 
-rpi-splash: ${SRCS} Makefile
+stos-splash: ${SRCS} Makefile
 	${CC} -O2 ${SRCS} ${CFLAGS} -o $@ ${LDFLAGS}
