@@ -174,5 +174,5 @@ text_render(const char *str, int len, int *widthp, int *heightp)
   for(int i = 0; i < len; i++)
     uc[i] = str[i];
 
-  return text_render_int(uc, len, 60, widthp, heightp);
+  return text_render_int(uc, len, 40, widthp, heightp);
 }
