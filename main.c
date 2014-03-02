@@ -651,7 +651,8 @@ main(int argc, char **argv)
   int opt;
   const char *font = NULL;
   const char *initial_str;
-  while((opt = getopt(argc, argv, "p:f:s:")) != -1) {
+  int daemonize = 1;
+  while((opt = getopt(argc, argv, "p:f:s:d")) != -1) {
     switch(opt) {
     case 'p':
       udpport = atoi(optarg);
@@ -661,6 +662,9 @@ main(int argc, char **argv)
       break;
     case 's':
       initial_str = optarg;
+      break;
+    case 'd':
+      daemonize = 1;
       break;
     }
   }
@@ -674,14 +678,26 @@ main(int argc, char **argv)
 
   obj_t test;
 
+
+  if(daemonize) {
+    if(daemon(0, 1)) {
+      perror("daemon");
+      exit(1);
+    }
+  }
+
+  printf("stos-splash running as pid %d\n", (int)getpid());
+  
+  FILE *fp = fopen("/var/run/stos-splash.pid", "w");
+  fprintf(fp, "%d\n", (int)getpid());
+  fclose(fp);
+
   bcm_host_init();
   init_gl();
 
   prog_tex = init_program(test_vshader, tex_fshader);
 
   ortho(projection_2d, 0, screen_width, screen_height, 0, -10, 10);
-
-  printmatrix(projection_2d);
 
   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
@@ -698,10 +714,6 @@ main(int argc, char **argv)
   pthread_t tid;
   pthread_create(&tid, NULL, status_thread, NULL);
 
-  FILE *fp = fopen("/var/run/stos-splash.pid", "w");
-  fprintf(fp, "%d\n", (int)getpid());
-  fclose(fp);
-
   signal(SIGTERM, doexit);
   signal(SIGINT, doexit);
 
@@ -710,6 +722,6 @@ main(int argc, char **argv)
   }
 
   unlink("/var/run/stos-splash.pid");
-  printf("Stopped\n");
+  printf("stos-splash: stopped\n");
   exit(0);
 }
