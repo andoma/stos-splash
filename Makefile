@@ -1,6 +1,4 @@
 
-CC=/home/andoma/stos/output/rpi/release/buildroot/host/usr/bin/arm-unknown-linux-gnueabi-gcc
-
 SRCS = main.c text.c
 
 CFLAGS += -std=gnu99 -fgnu89-inline
